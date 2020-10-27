@@ -22,6 +22,10 @@
       if (currentNum === parseInt(this.el.textContent, 10)) { //parseIntは取得した文字列を数値に直す
         this.el.classList.add('pressed');
         currentNum++;
+
+        if (currentNum === 4) {
+          clearTimeout(timeoutId);
+        }
       }
     }
   }
@@ -52,13 +56,27 @@
       });
     }
   }
+
+  function runTimer() {
+    const timer = document.getElementById('timer');
+    timer.textContent = ((Date.now() - startTime) / 1000).toFixed(2); //小数点２以下を表示
+
+    timeoutId = setTimeout(() => {
+      runTimer();
+    }, 10);
+  }
   
   const board = new Board();
 
   let currentNum = 0;
+  let startTime;
+  let timeoutId;
 
   const btn = document.getElementById('btn');
   btn.addEventListener('click', () => {
     board.activate();
+
+    startTime = Date.now();
+    runTimer();
   })
 }
