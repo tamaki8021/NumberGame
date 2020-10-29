@@ -1,7 +1,8 @@
 'use strict';
 {
   class Panel {
-    constructor() {
+    constructor(game) {
+      this.game = game;
       this.el = document.createElement('li');
       this.el.classList.add('pressed');
       this.el.addEventListener('click', () => {
@@ -32,10 +33,11 @@
 
 
   class Board {
-    constructor () {
+    constructor (game) {
+      this.game = game;
       this.panels = [];
       for (let i = 0; i < 4; i++) {
-        this.panels.push(new Panel());
+        this.panels.push(new Panel(this.game));
       }
       this.setup();
     }
@@ -57,31 +59,41 @@
     }
   }
 
-  function runTimer() {
-    const timer = document.getElementById('timer');
-    timer.textContent = ((Date.now() - startTime) / 1000).toFixed(2); //小数点２以下を表示
+  class Game {
+    constructor() {
+      this.board = new Board(this);
 
-    timeoutId = setTimeout(() => {
-      runTimer();
-    }, 10);
-  }
-  
-  const board = new Board();
-
-  let currentNum;
-  let startTime;
-  let timeoutId;
-
-  const btn = document.getElementById('btn');
-  btn.addEventListener('click', () => {
-    if (typeof timeoutId !== 'undefined') {
-      clearTimeout(timeoutId);
+      this.currentNum = undefined;
+      this.startTime = undefined;
+      this.timeoutId = undefined;
+    
+      const btn = document.getElementById('btn');
+      btn.addEventListener('click', () => {
+        this.start();
+      });
     }
 
-    currentNum = 0;
-    board.activate();
+    start() {
+      if (typeof this.timeoutId !== 'undefined') {
+        clearTimeout(this.timeoutId);
+      }
+  
+      this.currentNum = 0;
+      this.board.activate();
+  
+      this.startTime = Date.now();
+      this.runTimer();
+    }
 
-    startTime = Date.now();
-    runTimer();
-  })
+    runTimer() {
+      const timer = document.getElementById('timer');
+      timer.textContent = ((Date.now() - this.startTime) / 1000).toFixed(2); //小数点２以下を表示
+  
+      this.timeoutId = setTimeout(() => {
+        this.runTimer();
+      }, 10);
+    }
+  }
+
+  new.Game();
 }
