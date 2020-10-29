@@ -15,25 +15,24 @@
     }
 
     activate(num) {
-      this.el.classList.remove('pressed')
+      this.el.classList.remove('pressed');
       this.el.textContent = num;
     }
 
     check() {
-      if (currentNum === parseInt(this.el.textContent, 10)) { //parseIntは取得した文字列を数値に直す
+      if (this.game.getCurrentNum() === parseInt(this.el.textContent, 10)) { //parseIntは取得した文字列を数値に直す
         this.el.classList.add('pressed');
-        currentNum++;
+        this.game.addCurrentNum();
 
-        if (currentNum === 4) {
-          clearTimeout(timeoutId);
+        if (this.game.getCurrentNum() === 4) {
+          clearTimeout(this.game.getTimeoutId());
         }
       }
     }
   }
 
-
   class Board {
-    constructor (game) {
+    constructor(game) {
       this.game = game;
       this.panels = [];
       for (let i = 0; i < 4; i++) {
@@ -93,7 +92,19 @@
         this.runTimer();
       }, 10);
     }
+
+    addCurrentNum() {
+      this.currentNum++;
+    }
+
+    getCurrentNum() {
+      return this.currentNum;
+    }
+
+    getTimeoutId() {
+      return this.timeoutId;
+    }
   }
 
-  new.Game();
+  new Game();
 }
